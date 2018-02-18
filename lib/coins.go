@@ -1,5 +1,10 @@
 package allcoin
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Coins map[string]CoinInfo
 
 type CoinInfo struct {
@@ -16,7 +21,6 @@ func (cs Coins) Exist(coin string) bool {
 }
 
 func (cs Coins) Add(symbol, coinName string) error {
-
 	if cs.Exist(symbol) {
 		return fmt.Errorf("%s already exist! Please, use Set instead!\n", symbol)
 	}
@@ -34,9 +38,42 @@ func (cs Coins) Set(symbol, coinName string) {
 }
 
 func (cs Coins) GetCoinsFromSymbol(symbol string) ([2]string, error) {
-	// check if symbol has delimiter, delimit by delimiter if yes,
-	// or check against all of the coins if yes
-	return [2]string{"BTC", "LTC"}, nil
+	symbol = strings.ToUpper(symbol)
+
+	if len(symbol)%2 == 0 { // attempt to optimize
+
+		mid := len(symbol) / 2
+		if cs.ValidCoins(symbol[mid:], symbol[:mid]) {
+			return [2]string{symbol[mid:], symbol[:mid]}, nil
+		}
+	}
+
+	return cs.TryAllCombinations(symbol, len(symbol)-2)
+}
+
+func (cs Coins) TryAllCombinations(symbol string, cut int) ([2]string, error) {
+	if cut <= 2 {
+		err := fmt.Errorf("Could not find coins for symbol %s", symbol)
+		return [2]string{}, err
+	}
+
+	c1 := symbol[cut:]
+	c2 := symbol[:cut]
+
+	if !cs.ValidCoins(c1, c2) {
+		return cs.TryAllCombinations(symbol, cut-1)
+	} else {
+		return [2]string{c1, c2}, nil
+	}
+}
+
+func (cs Coins) ValidCoins(coins ...string) bool {
+	for _, coin := range coins {
+		if _, ok := cs[coin]; !ok {
+			return false
+		}
+	}
+	return true
 }
 
 func (ci CoinInfo) Resembles(coin string) bool {

@@ -1,49 +1,38 @@
 package allcoin
 
 import (
-	"fmt"
-	"os"
 	"testing"
 )
 
-var coins Coins
-var err error
-
-const testFile string = "test.json"
-
-func init() {
-	coins, err = NewFromAPI()
-}
+const TestFile string = "coins.json"
 
 func TestNewFromAPI(t *testing.T) {
+	coins, err := NewFromAPI()
 
 	if err != nil {
 		t.Fatalf("Error occured while parsing coins: %v\n", err)
 	}
 
-	fmt.Println(len(coins))
+	if len(coins) <= 1 {
+		t.Fatal("There are should be more then 1 coin")
+	}
+
+	//	WriteToFile(coins, TestFile)
 }
 
 func TestWriteToBuildFromFile(t *testing.T) {
-
-	err = WriteToFile(coins, testFile)
-
-	defer os.Remove(testFile)
-
-	if err != nil {
-		t.Fatalf("Error while writing to a file: %v\n", err)
-	}
-
-	coins2, err := NewFromJSON(testFile)
-
+	coins, err := NewFromJSON(TestFile)
 	if err != nil {
 		t.Fatalf("Error while building coins from JSON: %v\n", err)
 	}
 
-	for _, coin := range coins2 {
-		if !coins.Exist(coin.Symbol) {
+	if !coins.Exist("BTC") || !coins.Exist("LTC") || !coins.Exist("NEO") {
+		t.Fatal("BTC, LTC, NEO are existing coins")
+	}
 
-			t.Fatalf("Should have the same map, error on: %s - %s\n", coin.Symbol, coin.CoinName)
-		}
+	err = WriteToFile(coins, TestFile)
+
+	if err != nil {
+		t.Fatalf("Error while writing to a file: %v\n", err)
 	}
 }

@@ -11,7 +11,6 @@ import (
 const AllCoinsUrl = "https://min-api.cryptocompare.com/data/all/coinlist"
 
 func NewFromAPI() (Coins, error) {
-
 	type ApiCoins struct {
 		Data Coins `json:Data`
 	}
@@ -34,7 +33,6 @@ func NewFromAPI() (Coins, error) {
 }
 
 func NewFromJSON(fileName string) (Coins, error) {
-
 	var cs Coins
 
 	dat, err := ioutil.ReadFile(fileName)
@@ -49,7 +47,6 @@ func NewFromJSON(fileName string) (Coins, error) {
 }
 
 func WriteToFile(cs Coins, fileName string) error {
-
 	f, err := os.Create(fileName)
 
 	if err != nil {
@@ -57,13 +54,13 @@ func WriteToFile(cs Coins, fileName string) error {
 		return err
 	}
 
-	res2B, err := json.Marshal(cs)
+	jsCoins, err := json.Marshal(cs)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = f.WriteString(string(res2B))
+	_, err = f.WriteString(string(jsCoins))
 
 	if err != nil {
 		return err
