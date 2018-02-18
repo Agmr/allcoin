@@ -1,10 +1,5 @@
 package allcoin
 
-import (
-	"log"
-	"os"
-)
-
 type Coins map[string]CoinInfo
 
 type CoinInfo struct {
@@ -17,6 +12,24 @@ func (cs Coins) Exist(coin string) bool {
 		return true
 	} else {
 		return false
+	}
+}
+
+func (cs Coins) Add(symbol, coinName string) error {
+
+	if cs.Exist(symbol) {
+		return fmt.Errorf("%s already exist! Please, use Set instead!\n", symbol)
+	}
+
+	cs.Set(symbol, coinName)
+
+	return nil
+}
+
+func (cs Coins) Set(symbol, coinName string) {
+	cs[symbol] = CoinInfo{
+		Symbol:   symbol,
+		CoinName: coinName,
 	}
 }
 

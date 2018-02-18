@@ -2,7 +2,10 @@ package allcoin
 
 import (
 	"encoding/json"
+	"fmt"
 	"gopkg.in/resty.v1"
+	"io/ioutil"
+	"os"
 )
 
 const AllCoinsUrl = "https://min-api.cryptocompare.com/data/all/coinlist"
@@ -30,16 +33,41 @@ func NewFromAPI() (Coins, error) {
 	return allCoins.Data, nil
 }
 
-/*
-func NewFromJSON(fileName string) {
-	_, err := os.Open(fileName)
+func NewFromJSON(fileName string) (Coins, error) {
+
+	var cs Coins
+
+	dat, err := ioutil.ReadFile(fileName)
 
 	if err != nil {
-		log.Fatal(err)
+		return cs, err
 	}
+
+	err = json.Unmarshal(dat, &cs)
+
+	return cs, nil
 }
 
-func WriteToFile(w Writer) {
-}
+func WriteToFile(cs Coins, fileName string) error {
 
-*/
+	f, err := os.Create(fileName)
+
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		return err
+	}
+
+	res2B, err := json.Marshal(cs)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = f.WriteString(string(res2B))
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
