@@ -42,7 +42,7 @@ func TestCoins(t *testing.T) {
 		}
 	}
 
-	coins, err = allcoin.GetCoinsFromSymbol("BTCETH")
+	coins, err = allcoin.GetCoinsFromSymbol("btceth")
 	if err != nil {
 		t.Fatal(err)
 	}
