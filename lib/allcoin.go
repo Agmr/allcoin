@@ -1,3 +1,7 @@
+// Package alllcoin provides custom struct of
+// map[string]CoinInfo{Symbol: "...", CoinName: "..."}
+// with methods to operate this structure and find coins for a symbols without
+// explicit delimiter
 package allcoin
 
 import (
@@ -8,8 +12,10 @@ import (
 	"os"
 )
 
+// Url to pull all of the most recet coins
 const AllCoinsUrl = "https://min-api.cryptocompare.com/data/all/coinlist"
 
+// Building Coins object from API response
 func NewFromAPI() (Coins, error) {
 	type ApiCoins struct {
 		Data Coins `json:Data`
@@ -32,6 +38,7 @@ func NewFromAPI() (Coins, error) {
 	return allCoins.Data, nil
 }
 
+// Building Coins object from stored JSON file
 func NewFromJSON(fileName string) (Coins, error) {
 	var cs Coins
 

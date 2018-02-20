@@ -27,11 +27,16 @@ func TestCoins(t *testing.T) {
 		t.Fatal("Error should be not nil as we already added shitcoin")
 	}
 
-	if !allcoin.ValidCoins("BTC", "LTC", "NEO") {
+	allcoin.Remove("ShitCoin")
+	if allcoin.Exist("ShitCoin") {
+		t.Fatal("ShitCoin should not exist, we removed it during a previous step")
+	}
+
+	if !allcoin.Exist("BTC", "LTC", "NEO") {
 		t.Fatal("Error. BTC, LTC should exist")
 	}
 
-	coins, err := allcoin.GetCoinsFromSymbol("USDTETH")
+	coins, err := allcoin.SliceSymbolOnCoins("USDTETH")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,7 +47,7 @@ func TestCoins(t *testing.T) {
 		}
 	}
 
-	coins, err = allcoin.GetCoinsFromSymbol("btceth")
+	coins, err = allcoin.SliceSymbolOnCoins("btceth")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -53,7 +58,7 @@ func TestCoins(t *testing.T) {
 		}
 	}
 
-	_, err = allcoin.GetCoinsFromSymbol("KOKOAUG")
+	_, err = allcoin.SliceSymbolOnCoins("KOKOAUG")
 	if err == nil {
 		t.Fatalf("There are no coins for symbol KOKOAUG\n")
 	}
