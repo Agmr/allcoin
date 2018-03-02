@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// Was written in a rush, needs to be broken on smaller tests
 func TestCoins(t *testing.T) {
 	allcoin, err := NewFromJSON(TestFile)
 

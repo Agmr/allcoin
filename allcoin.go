@@ -1,7 +1,7 @@
-// Package alllcoin provides custom struct of
-// map[string]CoinInfo{Symbol: "...", CoinName: "..."}
-// with methods to operate this structure and find coins for a symbols without
-// explicit delimiter
+// Package alllcoin provides Coins struct with methods to operate on a state of
+// itself find coins for a symbols without explicit delimiter
+
+// Holds Constructors and Storing methods for Coins struct
 package allcoin
 
 import (
@@ -53,6 +53,7 @@ func NewFromJSON(fileName string) (Coins, error) {
 	return cs, nil
 }
 
+// Storing currently operated coins in a JSON format
 func WriteToFile(cs Coins, fileName string) error {
 	f, err := os.Create(fileName)
 
