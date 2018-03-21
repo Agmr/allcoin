@@ -17,7 +17,12 @@ func TestNewFromAPI(t *testing.T) {
 		t.Fatal("There are should be more then 1 coin")
 	}
 
-	//	WriteToFile(coins, TestFile)
+	err = WriteToFile(coins, TestFile)
+
+	if err != nil {
+		t.Fatalf("Error while writing to a file: %v\n", err)
+	}
+
 }
 
 func TestWriteToBuildFromFile(t *testing.T) {
@@ -28,11 +33,5 @@ func TestWriteToBuildFromFile(t *testing.T) {
 
 	if !coins.Exist("BTC") || !coins.Exist("LTC") || !coins.Exist("NEO") {
 		t.Fatal("BTC, LTC, NEO are existing coins")
-	}
-
-	err = WriteToFile(coins, TestFile)
-
-	if err != nil {
-		t.Fatalf("Error while writing to a file: %v\n", err)
 	}
 }

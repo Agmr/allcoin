@@ -6,7 +6,6 @@ package allcoin
 
 import (
 	"encoding/json"
-	"fmt"
 	"gopkg.in/resty.v1"
 	"io/ioutil"
 	"os"
@@ -58,17 +57,16 @@ func WriteToFile(cs Coins, fileName string) error {
 	f, err := os.Create(fileName)
 
 	if err != nil {
-		fmt.Printf("%v\n", err)
 		return err
 	}
 
-	jsCoins, err := json.Marshal(cs)
+	jsonEncodedCoins, err := cs.EncodeJSON()
 
 	if err != nil {
 		return err
 	}
 
-	_, err = f.WriteString(string(jsCoins))
+	_, err = f.WriteString(jsonEncodedCoins)
 
 	if err != nil {
 		return err

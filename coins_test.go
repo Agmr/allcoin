@@ -4,35 +4,13 @@ import (
 	"testing"
 )
 
-// Was written in a rush, needs to be broken on smaller tests
-func TestCoins(t *testing.T) {
-	allcoin, err := NewFromJSON(TestFile)
+var allcoin Coins
 
-	if err != nil {
-		t.Fatalf("Error occured while parsing coins: %v\n", err)
-	}
+func init() {
+	allcoin, _ = NewFromJSON(TestFile)
+}
 
-	err = allcoin.Add("ShitCoin", "SHIT COIN")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !allcoin.Exist("ShitCoin") {
-		t.Fatal("ShitCoin was added in previous step, but it cannot find it")
-	}
-
-	err = allcoin.Add("ShitCoin", "SC")
-
-	if err == nil {
-		t.Fatal("Error should be not nil as we already added shitcoin")
-	}
-
-	allcoin.Remove("ShitCoin")
-	if allcoin.Exist("ShitCoin") {
-		t.Fatal("ShitCoin should not exist, we removed it during a previous step")
-	}
-
+func SystemTest(t *testing.T) {
 	if !allcoin.Exist("BTC", "LTC", "NEO") {
 		t.Fatal("Error. BTC, LTC should exist")
 	}
@@ -62,5 +40,41 @@ func TestCoins(t *testing.T) {
 	_, err = allcoin.SliceSymbolOnCoins("KOKOAUG")
 	if err == nil {
 		t.Fatalf("There are no coins for symbol KOKOAUG\n")
+	}
+}
+
+func TestSetter(t *testing.T) {
+	allcoin.Set("ShitCoin", "SHIT COIN")
+
+	if !allcoin.Exist("ShitCoin") {
+		t.Fatal("ShitCoin was added in previous step, but it cannot find it")
+	}
+}
+
+func TestRemove(t *testing.T) {
+	allcoin.Set("ShitCoin", "SC")
+
+	allcoin.Remove("ShitCoin")
+
+	if allcoin.Exist("ShitCoin") {
+		t.Fatal("ShitCoin should not exist, we removed it during a previous step")
+	}
+}
+
+func TestEncodeJSON(t *testing.T) {
+	marshaled, err := allcoin.Marshal()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	jsonEncoded, err := allcoin.EncodeJSON()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if jsonEncoded != string(marshaled) {
+		t.Fatalf("Should have the same value: EncodeJSON: %s, Marshaled and casted to string: %s\n", jsonEncoded, string(marshaled))
 	}
 }

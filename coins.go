@@ -6,9 +6,17 @@
 package allcoin
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 )
+
+type CoinsRecognizer interface {
+	Set(string, string)
+	Remove(string)
+	SliceSymbolOnCoins(string) ([2]string, error)
+	Exist(...string) bool
+}
 
 type Coins map[string]CoinInfo
 
@@ -17,18 +25,7 @@ type CoinInfo struct {
 	CoinName string `json:CoinName` /// will become private with getters later
 }
 
-// Add symbol to the map. If it is already in the map - returns an errork
-func (cs Coins) Add(symbol, coinName string) error {
-	if cs.Exist(symbol) {
-		return fmt.Errorf("%s already exist! Please, use Set instead!\n", symbol)
-	}
-
-	cs.Set(symbol, coinName)
-
-	return nil
-}
-
-// Set a name for existing symbol
+// Set value for existing symbol, or add new
 func (cs Coins) Set(symbol, coinName string) {
 	cs[symbol] = CoinInfo{
 		Symbol:   symbol,
@@ -92,4 +89,24 @@ func (cs Coins) Exist(coins ...string) bool {
 		}
 	}
 	return true
+}
+
+func (cs Coins) EncodeJSON() (string, error) {
+	marshaledCoins, err := cs.Marshal()
+
+	if err != nil {
+		return "", nil
+	}
+
+	return string(marshaledCoins), nil
+}
+
+func (cs Coins) Marshal() ([]byte, error) {
+	marshaledCoins, err := json.Marshal(cs)
+
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return marshaledCoins, nil
 }
